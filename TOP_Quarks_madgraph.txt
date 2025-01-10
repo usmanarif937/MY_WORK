@@ -72,3 +72,12 @@ genrate complate event as stated above by usin Madgraph
 
 Above 3 files are extacted and converted to .lhe
 
+#ROOT installation
+install root by using link below and follow instructions
+https://iscinumpy.gitlab.io/post/root-conda/#fn:2
+
+activate root and go to respective folder/directory 
+genrate root file of each unweighted_event.lhe by using a code
+
+
+

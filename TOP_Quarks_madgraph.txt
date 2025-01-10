@@ -78,6 +78,13 @@ https://iscinumpy.gitlab.io/post/root-conda/#fn:2
 
 activate root and go to respective folder/directory 
 genrate root file of each unweighted_event.lhe by using a code
+lhe_reader.c
+open file and instructions are there how to execute code
+execute tjis code for all 3 unweighted_events.lhe
+it cerate a .root file which contain histograms.
+
+Now we will compare these histograms of SM, NP and SM+NP
+By using a python code 
 
 
 

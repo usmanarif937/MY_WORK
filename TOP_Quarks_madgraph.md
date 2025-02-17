@@ -107,7 +107,7 @@ example command is below
 
 
 IN run_card.dat change values of highlighted text
-
+```
 #*********************************************************************
 #                       MadGraph5_aMC@NLO                            *
 #                                                                    *
@@ -161,8 +161,7 @@ IN run_card.dat change values of highlighted text
      267000    = lhaid     ! if pdlabel=lhapdf, this is the lhapdf number
 # To see heavy ion options: type "update ion_pdf"
 #*********************************************************************
-
-
+```
 
 
 

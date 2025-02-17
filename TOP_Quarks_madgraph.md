@@ -1,0 +1,199 @@
+# MY_WORK
+# MadGraph for Top Quarks
+>> mkdir madgraph
+
+Install MadGraph with latest version (check it, i am using MG5_aMC_v3.6.0):
+
+>> wget launchpad.net/madgraph5/3.0/3.4.x/+download/MG5_aMC_v3.6.0.tar.gz
+>> tar xf MG5_aMC_v3.6.0.tar.gz
+>> rm MG5_aMC_v3.6.0.tar.gz
+
+Download models from (download the whole repo as you like and copy models in the Madgraph models dir):
+https://github.com/LHC-DMWG/model-repository/tree/DMSimp_t
+>> git clone https://github.com/LHC-DMWG/model-repository.git
+copy Pseudoscalar_2HDM from model-repository/models to MG5_aMC_v3_4_0/models directory.
+
+>> Model explanation can be found here:
+https://github.com/LHC-DMWG/model-repository/blob/DMSimp_t/models/Pseudoscalar_2HDM/README.txt
+
+[for lxplus at CERN use it. 
+source /cvmfs/sft.cern.ch/lcg/releases/LCG_98python3/Python/3.7.6/x86_64-centos7-gcc10-opt/Python-env.sh]
+
+Update the python3.8 dependency, see the question https://answers.launchpad.net/mg5amcnlo/+question/700490
+>> sudo apt update
+>> sudo apt install python3.8-dev
+
+Run MGraph:
+>> python3.8 ./bin/mg5_aMC
+
+Install LHAPDF:
+>> install lhapdf6
+
+Now run MGraph:
+For four top quarks:
+
+>> ./bin/mg5_aMC
+For proton prton fusion:
+
+>> generate p p > t t~ t t~ 
+
+
+
+>> display diagrams (optional for diagrams checking)
+>> output template_pp_tttt
+
+Generate events:
+>> launch
+After completing this process 
+we get a file in .gz formate in this directory  (MG5_aMC_v3_5_6/bin/template_pp_tttt/Events/run_01)
+extact file so it will convert into .lhe file
+
+
+Now we will proceed for two top and two anti-top production process 
+
+1-For SM 
+run madgraph
+run without importing model 2HDM
+>> generate p p > t t t~ t~,(t > w+ b, w+ > l+ vl),(t~ > w- b~,w- > l- vl~),(t > w+ b,w+ > l+ vl),(t~ > w- b~,w- > l- vl~)
+or if model imported use this command 
+>> generate p p > t t t~ t~,(t > w+ b, w+ > l+ vl),(t~ > w- b~,w- > l- vl~),(t > w+ b,w+ > l+ vl),(t~ > w- b~,w- > l- vl~) / a z h1 QED<=0
+>> output tempalte_pp_tttt_SM
+genrate complate event as stated above by usin Madgraph
+
+2-For NP
+run madgraph
+>>import model Pseudoscalar_2HDM
+>> generate p p > t t t~ t~,(t > w+ b, w+ > l+ vl),(t~ > w- b~,w- > l- vl~),(t > w+ b,w+ > l+ vl),(t~ > w- b~,w- > l- vl~) / a z h1 QCD<=2
+>> output template_pp_tttt_NP
+genrate complate event as stated above by usin Madgraph
+
+3-For NP+SM
+>>import model Pseudoscalar_2HDM
+>>generate p p > t t t~ t~,(t > w+ b, w+ > l+ vl),(t~ > w- b~,w- > l- vl~),(t > w+ b,w+ > l+ vl),(t~ > w- b~,w- > l- vl~) / a z h1 QED<=2
+>>output template_pp_tttt_SM_NP
+
+Above 3 files are extacted and converted to .lhe
+
+#ROOT installation
+install root by using link below and follow instructions
+https://iscinumpy.gitlab.io/post/root-conda/#fn:2
+
+activate root and go to respective folder/directory 
+genrate root file of each unweighted_event.lhe by using a code
+lhe_reader.c
+open file and instructions are there how to execute code
+execute tjis code for all 3 unweighted_events.lhe
+it cerate a .root file which contain histograms.
+
+Now we will compare these histograms of SM, NP and SM+NP
+By using a python code compare_hist.py
+
+installation of pythia and lhapdf in MadGraph
+after running MadGraph 
+MG5_aMC>install pythia8
+
+also install lhapdf
+MG5_aMC>install lhapdf6
+exit MG
+
+Now for delphes showring
+we will install delphes from https://github.com/delphes/delphes/blob/master/README.md
+follow setps to install delphes
+
+To run delphes use command 
+./DelphesHepMC2 cards/delphes_cards_CMS.tcl [output_File_name] [path/of/input/file .hepmc] 
+example command is below
+./DelphesHepMC2 cards/delphes_card_CMS.tcl delph_output_SM.root ../../mg_LTS/MG5_aMC_v3_5_7/template_pp_tttt_decayAll_SM/Events/run_01_decayed_1/tag_1_pythia8_events.hepmc
+
+
+IN run_card.dat change values of highlighted text
+
+#*********************************************************************
+#                       MadGraph5_aMC@NLO                            *
+#                                                                    *
+#                     run_card.dat MadEvent                          *
+#                                                                    *
+#  This file is used to set the parameters of the run.               *
+#                                                                    *
+#  Some notation/conventions:                                        *
+#                                                                    *
+#   Lines starting with a '# ' are info or comments                  *
+#                                                                    *
+#   mind the format:   value    = variable     ! comment             *
+#                                                                    *
+#   To display more options, you can type the command:               *
+#      update to_full                                                *
+#*********************************************************************
+#                                                                    
+#*********************************************************************
+# Tag name for the run (one word)                                    *
+#*********************************************************************
+  tag_1     = run_tag ! name of the run 
+#*********************************************************************
+# Number of events and rnd seed                                      *
+# Warning: Do not generate more than 1M events in a single run       *
+#*********************************************************************
+  10000 = nevents ! Number of unweighted events requested 
+ 27 = iseed   ! rnd seed (0=assigned automatically=default))
+#*********************************************************************
+# Collider type and energy                                           *
+# lpp: 0=No PDF, 1=proton, -1=antiproton,                            *
+#                2=elastic photon of proton/ion beam                 *
+#             +/-3=PDF of electron/positron beam                     *
+#             +/-4=PDF of muon/antimuon beam                         *
+#*********************************************************************
+     1        = lpp1    ! beam 1 type 
+     1        = lpp2    ! beam 2 type
+     6500.0     = ebeam1  ! beam 1 total energy in GeV
+     6500.0     = ebeam2  ! beam 2 total energy in GeV
+# To see polarised beam options: type "update beam_pol"
+
+#*********************************************************************
+# PDF CHOICE: this automatically fixes alpha_s and its evol.         *
+# pdlabel: lhapdf=LHAPDF (installation needed) [1412.7420]           *
+#          iww=Improved Weizsaecker-Williams Approx.[hep-ph/9310350] *
+#          eva=Effective W/Z/A Approx.       [2111.02442]            *
+#          edff=EDFF in gamma-UPC            [eq.(11) in 2207.03012] *
+#          chff=ChFF in gamma-UPC            [eq.(13) in 2207.03012] *
+#          none=No PDF, same as lhapdf with lppx=0                   *
+#*********************************************************************
+     lhapdf    = pdlabel     ! PDF set 
+     267000    = lhaid     ! if pdlabel=lhapdf, this is the lhapdf number
+# To see heavy ion options: type "update ion_pdf"
+#*********************************************************************
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

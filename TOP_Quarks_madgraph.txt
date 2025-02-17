@@ -96,6 +96,70 @@ also install lhapdf
 MG5_aMC>install lhapdf6
 exit MG
 
+
+
+
+we genrate an event with keeping mad_spin and run_card on 
+>import model Pseudoscalar_2HDM
+For New Physics
+>generate p p > t t t~ t~ / a z h1 QCD<=2
+>output template_pp_tttt_decayAll_NP
+similary for SM
+>generate p p > t t t~ t~ / a z h1 QED<=0
+>output template_pp_tttt_decayAll_SM
+For SM+NP
+>generate p p > t t t~ t~ / a z h1 QED<=2
+>output template_pp_tttt_decayAll_SM_NP
+
+after launch command we keep on shower and madspin (this will work only if we have already installed pythia and lhapdf)
+/===========================================================================\
+| 1. Choose the shower/hadronization program     shower = OFF               |
+| 2. Choose the detector simulation program    detector = Not Avail.        |
+| 3. Choose an analysis package (plot/convert) analysis = Not Avail.        |
+| 4. Decay onshell particles                    madspin = OFF               |
+| 5. Add weights to events for new hypp.       reweight = OFF               |
+\===========================================================================/
+
+
+
+IN run_card.dat change values pdlabel and lhaid
+#*********************************************************************
+#                       MadGraph5_aMC@NLO                            *
+#                                                                    *
+#                     run_card.dat MadEvent                          *
+#                                                                    *
+
+     #lhapdf    = pdlabel    
+     #267000    = lhaid   
+
+
+
+
+
+IN run_card.dat change
+#************************************************************
+#*                        MadSpin                           *
+#*                                                          *
+ set spinmode full          # Use one of the madspin special mode
+ set max_weight_ps_point 400  # number of PS to estimate the maximum for each event
+define e_m+ = e+ mu+
+define e_m- = e- mu-
+define e_m_n = ve vm
+define e_m_n~ = ve~ vm~
+# specify the decay for the final state particles
+decay t > w+ b, w+ > e_m+ e_m_n
+decay t~ > w- b~, w- > e_m- e_m_n~
+
+
+
+
+press enter to continue 
+Event will take some time to complete be patient
+This process will produce .hepmc file 
+.hepmc files furthur processed with delphes for detector effects
+
+
+
 Now for delphes showring
 we will install delphes from https://github.com/delphes/delphes/blob/master/README.md
 follow setps to install delphes
@@ -105,67 +169,7 @@ To run delphes use command
 example command is below
 ./DelphesHepMC2 cards/delphes_card_CMS.tcl delph_output_SM.root ../../mg_LTS/MG5_aMC_v3_5_7/template_pp_tttt_decayAll_SM/Events/run_01_decayed_1/tag_1_pythia8_events.hepmc
 
-
-IN run_card.dat change values of highlighted text
-```
-#*********************************************************************
-#                       MadGraph5_aMC@NLO                            *
-#                                                                    *
-#                     run_card.dat MadEvent                          *
-#                                                                    *
-#  This file is used to set the parameters of the run.               *
-#                                                                    *
-#  Some notation/conventions:                                        *
-#                                                                    *
-#   Lines starting with a '# ' are info or comments                  *
-#                                                                    *
-#   mind the format:   value    = variable     ! comment             *
-#                                                                    *
-#   To display more options, you can type the command:               *
-#      update to_full                                                *
-#*********************************************************************
-#                                                                    
-#*********************************************************************
-# Tag name for the run (one word)                                    *
-#*********************************************************************
-  tag_1     = run_tag ! name of the run 
-#*********************************************************************
-# Number of events and rnd seed                                      *
-# Warning: Do not generate more than 1M events in a single run       *
-#*********************************************************************
-  10000 = nevents ! Number of unweighted events requested 
- 27 = iseed   ! rnd seed (0=assigned automatically=default))
-#*********************************************************************
-# Collider type and energy                                           *
-# lpp: 0=No PDF, 1=proton, -1=antiproton,                            *
-#                2=elastic photon of proton/ion beam                 *
-#             +/-3=PDF of electron/positron beam                     *
-#             +/-4=PDF of muon/antimuon beam                         *
-#*********************************************************************
-     1        = lpp1    ! beam 1 type 
-     1        = lpp2    ! beam 2 type
-     6500.0     = ebeam1  ! beam 1 total energy in GeV
-     6500.0     = ebeam2  ! beam 2 total energy in GeV
-# To see polarised beam options: type "update beam_pol"
-
-#*********************************************************************
-# PDF CHOICE: this automatically fixes alpha_s and its evol.         *
-# pdlabel: lhapdf=LHAPDF (installation needed) [1412.7420]           *
-#          iww=Improved Weizsaecker-Williams Approx.[hep-ph/9310350] *
-#          eva=Effective W/Z/A Approx.       [2111.02442]            *
-#          edff=EDFF in gamma-UPC            [eq.(11) in 2207.03012] *
-#          chff=ChFF in gamma-UPC            [eq.(13) in 2207.03012] *
-#          none=No PDF, same as lhapdf with lppx=0                   *
-#*********************************************************************
-     #lhapdf    = pdlabel     ! PDF set 
-     #267000    = lhaid     ! if pdlabel=lhapdf, this is the lhapdf number
-# To see heavy ion options: type "update ion_pdf"
-#*********************************************************************
-```
-
-
-
-
+Again the output .root files produced from delphes will be annalyzed though a code to get required output.
 
 
 
